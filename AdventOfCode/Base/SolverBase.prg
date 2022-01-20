@@ -5,43 +5,61 @@ using System.IO
 using System.Linq
 
 
-/// <summary>
-/// The SolverBase class.
-/// </summary>
+/// <summary>The SolverBase class.</summary>
 abstract class SolverBase
 
-    public property DayDirectory as string get Path.Combine(AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.IndexOf("bin")), self:GetType().Name.Substring(0, 5))
-
-    private method Load(inputFileName as string) as List<string>
-        var fileName := Path.Combine(DayDirectory, inputFileName)
-        var content := File.ReadAllLines(fileName).ToList()
-        return content
-
-    private method Save(outputFileName as string, data as string) as string
-        var fileName := Path.Combine(DayDirectory, outputFileName)
-        File.WriteAllText(fileName, data)
-        return data
-
-    private method ExecutePuzzle(inputFileName as string, outputFileName as string, solveAction as System.Func<object>) as string
-        self:Parse(self:Load(inputFileName))
-        return self:Save(outputFileName, solveAction()?.ToString())
+   public property DayDirectory as string get Path.Combine(AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.IndexOf("bin")), self:GetType().Name.Substring(0, 5))
 
 
-    protected abstract method Parse(data as List<string>) as void
-
-    protected abstract method Solve1() as object
-
-    protected abstract method Solve2() as object
+   public constructor()
+   return
 
 
-    public method ExecutePuzzle1(inputFileName := "input.txt" as string, outputFileName := "output1.txt" as string) as string
-        return self:ExecutePuzzle(inputFileName, outputFileName, { => self:Solve1()})
+   private method Load(inputFileName as string) as List<string>
+      var fileName := Path.Combine(DayDirectory, inputFileName)
+      var content := File.ReadAllLines(fileName).ToList()
+      return content
 
-    public method ExecutePuzzle2(inputFileName := "input.txt" as string, outputFileName := "output2.txt" as string) as string
-        return self:ExecutePuzzle(inputFileName, outputFileName, { => self:Solve2()})
+
+   private method Save(outputFileName as string, data as string) as string
+      var fileName := Path.Combine(DayDirectory, outputFileName)
+      File.WriteAllText(fileName, data)
+      return data
 
 
-    constructor()
-    return
-    
+   private method ExecutePuzzle(inputFileName as string, outputFileName as string, solveAction as System.Func<object>) as string
+      self:Parse(self:Load(inputFileName))
+      return self:Save(outputFileName, solveAction()?.ToString())
+
+
+   protected abstract method Parse(data as List<string>) as void
+
+
+   protected abstract method Solve1() as object
+
+
+   protected abstract method Solve2() as object
+
+
+   public method ExecutePuzzle1(inputFileName := "input.txt" as string, outputFileName := "output1.txt" as string) as string
+      return self:ExecutePuzzle(inputFileName, outputFileName, { => self:Solve1()})
+
+
+   public method ExecutePuzzle2(inputFileName := "input.txt" as string, outputFileName := "output2.txt" as string) as string
+      return self:ExecutePuzzle(inputFileName, outputFileName, { => self:Solve2()})
+
+
+   #Region Utiity
+   protected method GetMap<T>(dimensionX as int, dimensionY as int, defaultValue as T) as List<List<T>>
+      var map := List<List<T>>{dimensionY}{}
+      for var y := 0 upto dimensionY
+         map.Add(List<T>{dimensionX})
+         for var x := 0 upto dimensionX
+            map[y].Add(defaultValue)
+         next
+      next
+      return map
+   #EndRegion Utiity
+
+
 end class
